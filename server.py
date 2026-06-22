@@ -360,9 +360,8 @@ class DudaServerHandler(SimpleHTTPRequestHandler):
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length).decode('utf-8')
             data = json.loads(post_data)
-            
             password = data.get('password', '')
-            if password == '1234':
+            if password == '9959':
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()

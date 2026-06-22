@@ -349,7 +349,7 @@
       color: #C09214;
     }
 
-    /* Switch toggle estilo iOS */
+    /* Switch toggle */
     .switch {
       position: relative;
       display: inline-block;
@@ -518,7 +518,7 @@
               <!-- Upload local de foto -->
               <div class="file-upload-wrapper">
                 <input type="file" id="imageFile" class="form-input" accept="image/*" onchange="clearImageUrl()">
-                <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block;">Faça o upload de uma foto do seu computador.</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block;">Faça o upload de uma foto.</span>
               </div>
               <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: bold;">-- OU --</div>
               <!-- Fallback via URL da internet -->
@@ -589,19 +589,23 @@
   </footer>
 
   <script>
-    // Inicializar Ícones
-    lucide.createIcons();
+    // ==========================================
+    // CONFIGURAÇÃO DO SUPABASE (BANCO DE DADOS)
+    // ==========================================
+    const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
+    const SUPABASE_KEY = "SUA_CHAVE_ANONIMA_DO_SUPABASE";
 
     let categories = [];
     let products = [];
+    let isSupabaseActive = false;
 
-    // Checar Sessão
+    // Checar autenticação
     function checkAuth() {
       const isLogged = sessionStorage.getItem("admin_logged") === "true";
       if (isLogged) {
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("dashboardContainer").style.display = "flex";
-        loadDashboardData();
+        initDashboard();
       } else {
         document.getElementById("loginContainer").style.display = "flex";
         document.getElementById("dashboardContainer").style.display = "none";
@@ -609,56 +613,71 @@
       lucide.createIcons();
     }
 
-    // Login do Admin
-    async function login() {
+    // Login local simples
+    function login() {
       const password = document.getElementById("adminPassword").value;
-      try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password })
-        });
-        
-        if (response.ok) {
-          sessionStorage.setItem("admin_logged", "true");
-          checkAuth();
-        } else {
-          alert("Senha incorreta! (Senha padrão de teste: 1234)");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao conectar com o servidor.");
+      if (password === '9959') {
+        sessionStorage.setItem("admin_logged", "true");
+        checkAuth();
+      } else {
+        alert("Senha incorreta! (Senha padrão de teste: 9959)");
       }
     }
 
-    // Sair do Admin
     function logout() {
       sessionStorage.setItem("admin_logged", "false");
       checkAuth();
     }
 
-    // Limpar arquivo se colar URL
-    function clearImageFile() {
-      document.getElementById("imageFile").value = "";
+    function clearImageFile() { document.getElementById("imageFile").value = ""; }
+    function clearImageUrl() { document.getElementById("imageUrl").value = ""; }
+
+    // Inicialização de Dados
+    async function initDashboard() {
+      if (SUPABASE_URL !== "SUA_URL_DO_SUPABASE" && SUPABASE_KEY !== "SUA_CHAVE_ANONIMA_DO_SUPABASE") {
+        isSupabaseActive = true;
+      } else {
+        console.warn("Aviso: Configure suas chaves do Supabase para ter o banco de dados online! Usando armazenamento local temporário.");
+      }
+      await loadData();
     }
 
-    // Limpar URL se escolher arquivo
-    function clearImageUrl() {
-      document.getElementById("imageUrl").value = "";
+    async function loadData() {
+      if (isSupabaseActive) {
+        await fetchCategories();
+        await fetchProducts();
+      } else {
+        loadLocalStorageData();
+      }
     }
 
-    // Carregar Dados do Dashboard
-    async function loadDashboardData() {
-      await fetchCategories();
-      await fetchProducts();
+    // Carregamento de Fallback Local
+    function loadLocalStorageData() {
+      const defaultCategories = ["Todos", "Beleza", "Casa & Decor", "Utilidades", "Moda"];
+      categories = JSON.parse(localStorage.getItem("duda_categories")) || defaultCategories;
+      products = JSON.parse(localStorage.getItem("duda_products")) || [];
+      renderCategoryOptions();
+      renderCategoryManageList();
+      renderProductsTable();
     }
 
-    // Buscar Categorias da API
+    function saveLocalStorageData() {
+      localStorage.setItem("duda_categories", JSON.stringify(categories));
+      localStorage.setItem("duda_products", JSON.stringify(products));
+    }
+
+    // Categorias: Buscar
     async function fetchCategories() {
       try {
-        const response = await fetch('/api/categories');
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=name`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
         if (response.ok) {
-          categories = await response.json();
+          const data = await response.json();
+          categories = ["Todos"] + data.map(c => c.name);
           renderCategoryOptions();
           renderCategoryManageList();
         }
@@ -667,12 +686,10 @@
       }
     }
 
-    // Renderizar Dropdown de Categorias
+    // Categorias: Renderizar no Formulário
     function renderCategoryOptions() {
       const select = document.getElementById("category");
       select.innerHTML = "";
-      
-      // Filtra "Todos" do dropdown
       categories.filter(c => c !== "Todos").forEach(cat => {
         const option = document.createElement("option");
         option.value = cat;
@@ -681,14 +698,14 @@
       });
     }
 
-    // Renderizar Gerenciamento de Categorias
+    // Categorias: Renderizar na Lista Administrativa
     function renderCategoryManageList() {
       const container = document.getElementById("categoriesContainer");
       container.innerHTML = "";
-      
       const list = categories.filter(c => c !== "Todos");
+
       if (list.length === 0) {
-        container.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhuma categoria cadastrada.</p>`;
+        container.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhuma categoria criada.</p>`;
         return;
       }
 
@@ -706,43 +723,55 @@
       lucide.createIcons();
     }
 
-    // Adicionar Nova Categoria
+    // Categorias: Adicionar
     async function saveCategory() {
       const nameInput = document.getElementById("newCatName");
       const name = nameInput.value.trim();
-      
-      if (!name) {
-        alert("Insira um nome válido para a categoria!");
-        return;
-      }
+      if (!name) return;
 
-      try {
-        const response = await fetch('/api/categories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name })
-        });
-        
-        if (response.ok) {
-          const res = await response.json();
-          if (res.status === 'success') {
+      if (isSupabaseActive) {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/categories`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({ name })
+          });
+          if (response.ok) {
             nameInput.value = "";
             await fetchCategories();
-          } else {
-            alert("Essa categoria já existe!");
           }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
+      } else {
+        if (!categories.includes(name)) {
+          categories.push(name);
+          saveLocalStorageData();
+          nameInput.value = "";
+          loadLocalStorageData();
+        } else {
+          alert("Categoria já existe!");
+        }
       }
     }
 
-    // Excluir Categoria
+    // Categorias: Excluir
     async function deleteCategory(name) {
-      if (confirm(`Tem certeza que deseja deletar a categoria "${name}"? os produtos vinculados não serão deletados.`)) {
+      if (!confirm(`Tem certeza que deseja deletar a categoria "${name}"?`)) return;
+
+      if (isSupabaseActive) {
         try {
-          const response = await fetch(`/api/categories?name=${encodeURIComponent(name)}`, {
-            method: 'DELETE'
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?name=eq.${encodeURIComponent(name)}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
           });
           if (response.ok) {
             await fetchCategories();
@@ -750,13 +779,22 @@
         } catch (err) {
           console.error(err);
         }
+      } else {
+        categories = categories.filter(c => c !== name);
+        saveLocalStorageData();
+        loadLocalStorageData();
       }
     }
 
-    // Buscar Produtos
+    // Produtos: Buscar
     async function fetchProducts() {
       try {
-        const response = await fetch('/api/products');
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=id.desc`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
         if (response.ok) {
           products = await response.json();
           renderProductsTable();
@@ -766,13 +804,13 @@
       }
     }
 
-    // Renderizar Tabela de Produtos
+    // Produtos: Renderizar Tabela
     function renderProductsTable() {
       const tbody = document.getElementById("productsTableBody");
       tbody.innerHTML = "";
 
       if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum achadinho cadastrado ainda.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum achadinho cadastrado.</td></tr>`;
         return;
       }
 
@@ -782,7 +820,7 @@
         
         tr.innerHTML = `
           <td>
-            ${p.image ? `<img src="${p.image}" class="prod-thumb" alt="">` : `<i data-lucide="image" size="24" style="color: var(--accent-rose)"></i>`}
+            ${p.image ? `<img src="${p.image}" class="prod-thumb" alt="">` : `<i data-lucide="image" size="24"></i>`}
           </td>
           <td style="font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
             ${p.title}
@@ -806,10 +844,10 @@
       lucide.createIcons();
     }
 
-    // Salvar Produto (Formulário)
+    // Produtos: Salvar com Upload de imagem no Supabase Storage
     async function saveProduct(e) {
       e.preventDefault();
-      
+
       const title = document.getElementById("title").value.trim();
       const description = document.getElementById("description").value.trim();
       const category = document.getElementById("category").value;
@@ -820,76 +858,165 @@
       const isFeatured = document.getElementById("isFeatured").checked ? 1 : 0;
 
       if (!imageFile && !imageUrl) {
-        alert("Por favor, selecione um arquivo de imagem para upload ou insira um link de imagem da internet!");
+        alert("Forneça uma foto por upload ou link de internet!");
         return;
       }
 
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("category", category);
-      formData.append("price", price);
-      formData.append("link", link);
-      formData.append("imageUrl", imageUrl);
-      formData.append("isFeatured", isFeatured);
+      let finalImageUrl = imageUrl;
+
+      // Executa upload no Supabase Storage
       if (imageFile) {
-        formData.append("imageFile", imageFile);
+        if (isSupabaseActive) {
+          try {
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const uploadUrl = `${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`;
+
+            const response = await fetch(uploadUrl, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': imageFile.type
+              },
+              body: imageFile
+            });
+
+            if (response.ok) {
+              // URL Pública do arquivo no Supabase Storage
+              finalImageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+            } else {
+              alert("Erro ao enviar a imagem para o storage. Certifique-se de que a pasta 'product-images' existe no storage e está pública.");
+              return;
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Erro na conexão com o armazenamento.");
+            return;
+          }
+        } else {
+          // Fallback local: transforma a imagem em base64 para caber no localStorage
+          finalImageUrl = await toBase64(imageFile);
+        }
       }
 
-      try {
-        const response = await fetch('/api/products', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (response.ok) {
-          alert("Achadinho cadastrado com sucesso! 🎉");
-          document.getElementById("productForm").reset();
-          await fetchProducts();
-        } else {
-          alert("Erro ao cadastrar produto. Verifique os campos.");
+      const newProduct = {
+        title,
+        description,
+        category,
+        price: price ? parseFloat(price) : null,
+        link,
+        image: finalImageUrl,
+        is_featured: isFeatured
+      };
+
+      if (isSupabaseActive) {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProduct)
+          });
+
+          if (response.ok) {
+            alert("Achadinho postado com sucesso! 🎉");
+            document.getElementById("productForm").reset();
+            await fetchProducts();
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
-        alert("Erro de conexão ao salvar.");
+      } else {
+        newProduct.id = Date.now().toString();
+        products.unshift(newProduct);
+        saveLocalStorageData();
+        alert("Achadinho postado com sucesso! (Salvo localmente) 🎉");
+        document.getElementById("productForm").reset();
+        loadLocalStorageData();
       }
     }
 
-    // Alternar Destaque
+    // Auxiliar converter file em base64
+    const toBase64 = file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+
+    // Alternar destaque
     async function toggleFeatured(id, isChecked) {
-      try {
-        const response = await fetch('/api/products/toggle-featured', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, is_featured: isChecked ? 1 : 0 })
-        });
-        
-        if (response.ok) {
-          // Recarregar dados locais
-          await fetchProducts();
-        } else {
-          alert("Erro ao alterar destaque.");
+      const isFeaturedVal = isChecked ? 1 : 0;
+
+      if (isSupabaseActive) {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ is_featured: isFeaturedVal })
+          });
+          if (response.ok) {
+            await fetchProducts();
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
+      } else {
+        const prod = products.find(p => p.id === id);
+        if (prod) {
+          prod.is_featured = isFeaturedVal;
+          saveLocalStorageData();
+          loadLocalStorageData();
+        }
       }
     }
 
     // Excluir Produto
     async function deleteProduct(id) {
-      if (confirm("Tem certeza que deseja excluir permanentemente este achadinho da vitrine?")) {
+      if (!confirm("Tem certeza que deseja excluir este achadinho?")) return;
+
+      if (isSupabaseActive) {
         try {
-          const response = await fetch(`/api/products?id=${id}`, {
-            method: 'DELETE'
+          // Busca o registro para pegar a imagem antes de deletar
+          const prodInfo = products.find(p => p.id == id);
+          
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
           });
+
           if (response.ok) {
+            // Se a imagem estava no Supabase Storage, tenta deletar de lá também
+            if (prodInfo && prodInfo.image && prodInfo.image.includes('/storage/v1/object/public/product-images/')) {
+              const fileName = prodInfo.image.split('/').pop();
+              await fetch(`${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`, {
+                method: 'DELETE',
+                headers: {
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+              });
+            }
             await fetchProducts();
-          } else {
-            alert("Erro ao excluir produto.");
           }
         } catch (err) {
           console.error(err);
         }
+      } else {
+        products = products.filter(p => p.id !== id);
+        saveLocalStorageData();
+        loadLocalStorageData();
       }
     }
 

@@ -447,7 +447,7 @@
     /* Seção de Destaques */
     .featured-section {
       margin-bottom: 60px;
-      display: none; /* Só mostra se houver itens destacados */
+      display: none;
     }
 
     .featured-header {
@@ -720,32 +720,6 @@
       animation: wiggle-bag 2s infinite ease-in-out;
     }
 
-    @keyframes wiggle-bag {
-      0%, 100% { transform: rotate(0deg); }
-      15% { transform: rotate(-10deg) scale(1.05); }
-      30% { transform: rotate(10deg) scale(1.05); }
-      45% { transform: rotate(-10deg); }
-      60% { transform: rotate(10deg); }
-      75% { transform: rotate(0deg); }
-    }
-
-    /* Sem Produtos */
-    .no-products {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 90px 24px;
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      border: 2px dashed rgba(212, 175, 55, 0.35);
-      color: var(--text-muted);
-      backdrop-filter: blur(10px);
-    }
-
-    .no-products i {
-      margin-bottom: 16px;
-      color: var(--gold-primary);
-    }
-
     /* Rodapé */
     footer {
       text-align: center;
@@ -767,11 +741,7 @@
       animation: heart-beat 1.2s infinite alternate;
     }
 
-    @keyframes heart-beat {
-      to { transform: scale(1.2); }
-    }
-
-    /* Botão Flutuante Administrativo - Redireciona para admin.html */
+    /* Botão Flutuante Administrativo */
     .admin-float-btn {
       position: fixed;
       bottom: 30px;
@@ -797,17 +767,6 @@
       border-color: var(--gold-primary);
       transform: scale(1.1) rotate(15deg);
       box-shadow: 0 12px 28px rgba(212, 175, 55, 0.4);
-    }
-
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes pulse-sparkle {
-      0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 6px var(--gold-primary)); }
     }
   </style>
 </head>
@@ -852,35 +811,23 @@
       <path d="M220,53 Q270,40 280,70 Q240,70 220,53 Z" fill="url(#gold-grad-svg)" />
       <path d="M170,100 Q130,60 110,80 Q140,110 170,100 Z" fill="url(#gold-grad-svg)" />
       <path d="M170,100 Q210,95 230,120 Q190,120 170,100 Z" fill="url(#gold-grad-svg)" />
-      <path d="M125,152 Q85,120 70,140 Q100,165 125,152 Z" fill="url(#gold-grad-svg)" />
-      <path d="M125,152 Q160,150 180,180 Q145,175 125,152 Z" fill="url(#gold-grad-svg)" />
     </svg>
 
     <svg class="gold-leaf leaf-bottom-left" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M300,0 Q180,80 80,220 Q50,260 20,290" stroke="url(#gold-grad-svg)" stroke-width="4" stroke-linecap="round"/>
       <path d="M220,53 Q190,10 160,20 Q190,50 220,53 Z" fill="url(#gold-grad-svg)" />
       <path d="M220,53 Q270,40 280,70 Q240,70 220,53 Z" fill="url(#gold-grad-svg)" />
-      <path d="M170,100 Q130,60 110,80 Q140,110 170,100 Z" fill="url(#gold-grad-svg)" />
-      <path d="M170,100 Q210,95 230,120 Q190,120 170,100 Z" fill="url(#gold-grad-svg)" />
-      <path d="M125,152 Q85,120 70,140 Q100,165 125,152 Z" fill="url(#gold-grad-svg)" />
-      <path d="M125,152 Q160,150 180,180 Q145,175 125,152 Z" fill="url(#gold-grad-svg)" />
     </svg>
 
-    <!-- Partículas flutuantes douradas -->
+    <!-- Partículas flutuantes -->
     <svg class="gold-sparkle sparkle-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" fill="url(#gold-grad-svg)" />
     </svg>
     <svg class="gold-sparkle sparkle-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" fill="url(#gold-grad-svg)" />
     </svg>
-    <svg class="gold-sparkle sparkle-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" fill="url(#gold-grad-svg)" />
-    </svg>
-    <svg class="gold-sparkle sparkle-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" fill="url(#gold-grad-svg)" />
-    </svg>
 
-    <!-- Definição de Gradiente de Ouro compartilhado pelos SVGs -->
+    <!-- Definição de Gradiente de Ouro -->
     <svg width="0" height="0">
       <defs>
         <linearGradient id="gold-grad-svg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -940,7 +887,7 @@
       </div>
     </section>
 
-    <!-- Seção de Destaques (Destaques da Semana) -->
+    <!-- Seção de Destaques -->
     <section id="featuredSection" class="featured-section">
       <h2 class="featured-header">
         <i data-lucide="star"></i> Destaques da Semana
@@ -959,7 +906,7 @@
     </section>
   </div>
 
-  <!-- Botão Flutuante Administrativo - Leva para admin.html -->
+  <!-- Botão Flutuante Administrativo -->
   <a href="admin.html" class="admin-float-btn" title="Painel da Duda">
     <i data-lucide="lock" size="22"></i>
   </a>
@@ -971,40 +918,106 @@
   </footer>
 
   <script>
+    // ==========================================
+    // CONFIGURAÇÃO DO SUPABASE (BANCO DE DADOS)
+    // ==========================================
+    // Para hospedar no GitHub Pages de graça, substitua as duas variáveis abaixo
+    // com as chaves reais que você pegará ao criar seu projeto no Supabase.com
+    const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
+    const SUPABASE_KEY = "SUA_CHAVE_ANONIMA_DO_SUPABASE";
+
     let products = [];
     let categories = ["Todos"];
     let activeCategory = "Todos";
 
     // Inicialização da Página
     async function init() {
+      // Caso o usuário ainda não tenha colocado as chaves do Supabase, usamos localStorage de fallback
+      if (SUPABASE_URL === "SUA_URL_DO_SUPABASE" || SUPABASE_KEY === "SUA_CHAVE_ANONIMA_DO_SUPABASE") {
+        console.warn("Aviso: Configure suas chaves do Supabase para ter o banco de dados online! Usando armazenamento local temporário.");
+        loadLocalStorageData();
+        return;
+      }
+
       await fetchCategories();
       await fetchProducts();
       lucide.createIcons();
     }
 
-    // Buscar Categorias da API
+    // Usar LocalStorage se o Supabase não estiver configurado
+    function loadLocalStorageData() {
+      const defaultCategories = ["Todos", "Beleza", "Casa & Decor", "Utilidades", "Moda"];
+      const defaultProducts = [
+        {
+          id: "1",
+          title: "Mini Umidificador Aromatizador Portátil",
+          description: "Deixe seu quarto ou escritório com um cheirinho maravilhoso. Design de madeira sofisticado e com luzes LED RGB coloridas de fundo.",
+          category: "Casa & Decor",
+          price: "24.90",
+          link: "https://shopee.com.br",
+          image: "https://images.unsplash.com/photo-1519183071298-a2962feb14f4?auto=format&fit=crop&q=80&w=400",
+          is_featured: 1
+        },
+        {
+          id: "2",
+          title: "Kit Pincéis de Maquiagem Profissional Pastel",
+          description: "Estojo com 8 pincéis super macios nas cores pastéis. Ideal para blush, sombra e pó compacto.",
+          category: "Beleza",
+          price: "18.50",
+          link: "https://shopee.com.br",
+          image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=400",
+          is_featured: 0
+        },
+        {
+          id: "3",
+          title: "Garrafa Térmica Motivacional 2 Litros",
+          description: "Garrafa perfeita para levar à academia, com adesivos fofos em 2D/3D inclusos e marcações de horários para beber água.",
+          category: "Utilidades",
+          price: "32.00",
+          link: "https://shopee.com.br",
+          image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=400",
+          is_featured: 1
+        }
+      ];
+      categories = JSON.parse(localStorage.getItem("duda_categories")) || defaultCategories;
+      products = JSON.parse(localStorage.getItem("duda_products")) || defaultProducts;
+      renderCategoriesList();
+      renderProductsGrid();
+    }
+
+    // Buscar Categorias do Supabase
     async function fetchCategories() {
       try {
-        const response = await fetch('/api/categories');
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=name`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
         if (response.ok) {
-          categories = await response.json();
+          const data = await response.json();
+          categories = ["Todos"] + data.map(c => c.name);
         }
       } catch (err) {
-        console.error("Erro ao carregar categorias:", err);
-        categories = ["Todos", "Beleza", "Casa & Decor", "Utilidades", "Moda"];
+        console.error("Erro ao carregar categorias do Supabase:", err);
       }
       renderCategoriesList();
     }
 
-    // Buscar Produtos da API
+    // Buscar Produtos do Supabase
     async function fetchProducts() {
       try {
-        const response = await fetch('/api/products');
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=id.desc`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
         if (response.ok) {
           products = await response.json();
         }
       } catch (err) {
-        console.error("Erro ao carregar produtos:", err);
+        console.error("Erro ao carregar produtos do Supabase:", err);
       }
       renderProductsGrid();
     }
@@ -1042,11 +1055,10 @@
         displayList = displayList.filter(p => p.category === activeCategory);
       }
 
-      // Separar Destaques (apenas se estiver listando todos e sem busca ativa)
+      // Separar Destaques
       const isSearchActive = document.getElementById("searchInput").value.trim() !== "";
       const featuredItems = displayList.filter(p => p.is_featured === 1);
       
-      // Renderizar Destaques (se houver e não for busca)
       if (featuredItems.length > 0 && activeCategory === "Todos" && !isSearchActive) {
         featuredSection.style.display = "block";
         featuredItems.forEach(p => {
@@ -1056,12 +1068,10 @@
         featuredSection.style.display = "none";
       }
 
-      // O restante dos produtos vai na grade geral (ou todos se estiver filtrando/buscando)
       const generalItems = (activeCategory !== "Todos" || isSearchActive) 
         ? displayList 
         : displayList.filter(p => p.is_featured !== 1);
 
-      // Ajusta título da seção geral
       const sectionTitle = document.getElementById("productsSectionTitle");
       if (activeCategory !== "Todos" || isSearchActive) {
         sectionTitle.textContent = `Resultados (${displayList.length})`;
@@ -1093,8 +1103,6 @@
       card.className = `product-card ${isFeaturedCard ? 'featured' : ''}`;
       
       const formattedPrice = p.price ? parseFloat(p.price).toFixed(2).replace('.', ',') : '';
-      
-      // Detecção de imagem local vs imagem externa
       const imgPath = p.image ? p.image : '';
 
       card.innerHTML = `
