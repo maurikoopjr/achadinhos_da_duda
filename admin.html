@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel da Duda 🌸</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Estilos base consistentes com o index */
+    :root {
+      --bg-primary: #FFF4F4;
+      --text-main: #3F2A28;
+      --text-muted: #8E706D;
+      --accent-rose: #FFAAA6;
+      --accent-soft-rose: #FFEBE9;
+      --accent-peach: #FFD3B6;
+      --accent-lavender: #E8D3FF;
+      --gold-primary: #E0B034;
+      --border-gold: 1px solid rgba(212, 175, 55, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 30px;
+      --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Background Mesh Animado */
+    .mesh-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      overflow: hidden;
+      background: linear-gradient(180deg, #FFF5F5 0%, #FFF2FB 50%, #FFF7F2 100%);
+    }
+
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(130px);
+      opacity: 0.6;
+      mix-blend-mode: multiply;
+      animation: float-blob 25s infinite alternate;
+    }
+
+    .blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, var(--accent-rose) 0%, rgba(255,255,255,0) 70%); top: -100px; left: -100px; }
+    .blob-2 { width: 600px; height: 600px; background: radial-gradient(circle, var(--accent-peach) 0%, rgba(255,255,255,0) 70%); bottom: -100px; right: -100px; }
+
+    @keyframes float-blob {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -60px) scale(1.1); }
+    }
+
+    /* Ramos de Folhas Douradas */
+    .gold-leaf {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.15;
+      filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.2));
+    }
+    .leaf-1 { top: 20px; right: -50px; width: 280px; transform: rotate(-25deg); }
+    .leaf-2 { bottom: 20px; left: -50px; width: 280px; transform: rotate(155deg); }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabeçalho do Painel */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      border-radius: var(--radius-md);
+      border: var(--border-gold);
+      box-shadow: 0 8px 32px rgba(255, 170, 166, 0.1);
+    }
+
+    .admin-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .admin-header h1 span {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.5rem;
+      color: #E28F8B;
+      font-weight: 400;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .btn-back:hover {
+      background: var(--accent-soft-rose);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 170, 166, 0.15);
+    }
+
+    /* Grid do Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border-radius: var(--radius-md);
+      border: var(--border-gold);
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(255, 170, 166, 0.1);
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #2F1E1D;
+    }
+
+    /* Tela de Login */
+    .login-wrapper {
+      max-width: 420px;
+      width: 100%;
+      margin: auto;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .login-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .login-logo span {
+      font-family: 'Sacramento', cursive;
+      font-size: 3rem;
+      color: #E28F8B;
+    }
+
+    /* Formulários */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      background-color: rgba(255, 255, 255, 0.7);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--gold-primary);
+      background-color: white;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold-primary);
+    }
+
+    .file-upload-wrapper {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #FFAAA6 0%, #E0B034 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(224, 176, 52, 0.25);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(224, 176, 52, 0.4);
+    }
+
+    /* Lista de Categorias no Painel */
+    .cat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      border: 1px solid rgba(255, 170, 166, 0.15);
+    }
+
+    .btn-delete-icon {
+      background: none;
+      border: none;
+      color: #D32F2F;
+      cursor: pointer;
+      padding: 4px;
+      transition: var(--transition);
+    }
+
+    .btn-delete-icon:hover {
+      color: #FF1744;
+      transform: scale(1.15);
+    }
+
+    /* Tabela de Produtos Cadastrados */
+    .products-list-card {
+      margin-top: 30px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 600;
+      padding: 16px;
+      border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 170, 166, 0.15);
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+
+    .prod-thumb {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .price-tag {
+      font-weight: 600;
+      color: #C09214;
+    }
+
+    /* Switch toggle estilo iOS */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #CCC;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--gold-primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Rodapé */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Mesh Animado -->
+  <div class="mesh-background">
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    
+    <!-- Ramos de Folhas Douradas -->
+    <svg class="gold-leaf leaf-1" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M300,0 Q180,80 80,220 Q50,260 20,290" stroke="url(#gold-grad-svg)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M220,53 Q190,10 160,20 Q190,50 220,53 Z" fill="url(#gold-grad-svg)" />
+      <path d="M220,53 Q270,40 280,70 Q240,70 220,53 Z" fill="url(#gold-grad-svg)" />
+      <path d="M170,100 Q130,60 110,80 Q140,110 170,100 Z" fill="url(#gold-grad-svg)" />
+      <path d="M170,100 Q210,95 230,120 Q190,120 170,100 Z" fill="url(#gold-grad-svg)" />
+      <path d="M125,152 Q85,120 70,140 Q100,165 125,152 Z" fill="url(#gold-grad-svg)" />
+      <path d="M125,152 Q160,150 180,180 Q145,175 125,152 Z" fill="url(#gold-grad-svg)" />
+    </svg>
+
+    <svg class="gold-leaf leaf-2" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M300,0 Q180,80 80,220 Q50,260 20,290" stroke="url(#gold-grad-svg)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M220,53 Q190,10 160,20 Q190,50 220,53 Z" fill="url(#gold-grad-svg)" />
+      <path d="M220,53 Q270,40 280,70 Q240,70 220,53 Z" fill="url(#gold-grad-svg)" />
+      <path d="M170,100 Q130,60 110,80 Q140,110 170,100 Z" fill="url(#gold-grad-svg)" />
+      <path d="M170,100 Q210,95 230,120 Q190,120 170,100 Z" fill="url(#gold-grad-svg)" />
+    </svg>
+
+    <!-- Definição de Gradiente de Ouro -->
+    <svg width="0" height="0">
+      <defs>
+        <linearGradient id="gold-grad-svg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFECA1" />
+          <stop offset="40%" stop-color="#D4AF37" />
+          <stop offset="80%" stop-color="#A67B0D" />
+          <stop offset="100%" stop-color="#FFF3C2" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- CONTAINER DE LOGIN -->
+  <div class="container" id="loginContainer" style="display: none;">
+    <div class="card login-wrapper">
+      <div class="login-logo">
+        Painel da <span>Duda</span> 🌸
+      </div>
+      <p style="margin-bottom: 24px; color: var(--text-muted);">Entre com sua senha de administrador.</p>
+      
+      <div class="form-group">
+        <label class="form-label" for="adminPassword">Senha do Painel</label>
+        <input type="password" id="adminPassword" class="form-input" placeholder="Digite sua senha...">
+      </div>
+      <button class="btn-submit" onclick="login()">Entrar no Painel</button>
+      <a href="index.html" class="btn-back" style="margin-top: 16px; width: 100%; justify-content: center;">
+        <i data-lucide="arrow-left" size="16"></i> Voltar à Vitrine
+      </a>
+    </div>
+  </div>
+
+  <!-- CONTAINER DO DASHBOARD (EDITORES) -->
+  <div class="container" id="dashboardContainer" style="display: none;">
+    <!-- Cabeçalho -->
+    <div class="admin-header">
+      <h1>Painel Administrativo da <span>Duda</span> 🌸</h1>
+      <div style="display: flex; gap: 12px;">
+        <a href="index.html" class="btn-back">
+          <i data-lucide="eye" size="16"></i> Ver Loja
+        </a>
+        <button class="btn-back" onclick="logout()" style="color: #D32F2F; border-color: #FFCDD2;">
+          <i data-lucide="log-out" size="16"></i> Sair
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid de Formulários -->
+    <div class="dashboard-grid">
+      
+      <!-- Card Adicionar Produto -->
+      <div class="card">
+        <h2 class="card-title"><i data-lucide="plus-circle"></i> Adicionar Novo Achadinho</h2>
+        <form id="productForm" onsubmit="saveProduct(event)">
+          
+          <div class="form-group">
+            <label class="form-label" for="title">Título do Produto *</label>
+            <input type="text" id="title" class="form-input" required placeholder="Ex: Mini Umidificador Aromatizador Portátil">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">Descrição / Dica de Afiliado</label>
+            <textarea id="description" class="form-textarea" placeholder="Diga por que as pessoas deveriam comprar este item..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="category">Categoria do Produto *</label>
+            <select id="category" class="form-select" required>
+              <!-- Preenchido dinamicamente -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="price">Preço R$ (Opcional)</label>
+            <input type="number" step="0.01" id="price" class="form-input" placeholder="Ex: 24.90">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="link">Link de Afiliado da Shopee *</label>
+            <input type="url" id="link" class="form-input" required placeholder="https://shope.ee/...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Imagem do Produto *</label>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Upload local de foto -->
+              <div class="file-upload-wrapper">
+                <input type="file" id="imageFile" class="form-input" accept="image/*" onchange="clearImageUrl()">
+                <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block;">Faça o upload de uma foto do seu computador.</span>
+              </div>
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; font-weight: bold;">-- OU --</div>
+              <!-- Fallback via URL da internet -->
+              <div>
+                <input type="url" id="imageUrl" class="form-input" placeholder="Cole a URL de uma imagem da web..." oninput="clearImageFile()">
+                <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block;">Copie o endereço de uma foto da Shopee e cole aqui.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="isFeatured">
+            <label for="isFeatured" style="font-weight: 600; cursor: pointer;">🌟 Adicionar à seção de Destaques do topo</label>
+          </div>
+
+          <button type="submit" class="btn-submit">Postar Achadinho na Vitrine</button>
+        </form>
+      </div>
+
+      <!-- Card Gerenciar Categorias -->
+      <div class="card">
+        <h2 class="card-title"><i data-lucide="tag"></i> Criar Categorias (Filtros)</h2>
+        
+        <div class="form-group">
+          <label class="form-label">Cadastrar Nova Categoria</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="newCatName" class="form-input" placeholder="Ex: Roupas Femininas">
+            <button class="btn-back" onclick="saveCategory()" style="background-color: var(--accent-peach);">Criar</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+          <label class="form-label" style="margin-bottom: 12px;">Categorias Existentes</label>
+          <div id="categoriesContainer">
+            <!-- Dinâmico -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Lista de Achadinhos Cadastrados -->
+    <div class="card products-list-card">
+      <h2 class="card-title"><i data-lucide="list"></i> Todos os Achadinhos Postados</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Título</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Destaque</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <!-- Dinâmico -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Painel Administrativo Achadinhos da Duda &copy; 2026</p>
+  </footer>
+
+  <script>
+    // Inicializar Ícones
+    lucide.createIcons();
+
+    let categories = [];
+    let products = [];
+
+    // Checar Sessão
+    function checkAuth() {
+      const isLogged = sessionStorage.getItem("admin_logged") === "true";
+      if (isLogged) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("dashboardContainer").style.display = "flex";
+        loadDashboardData();
+      } else {
+        document.getElementById("loginContainer").style.display = "flex";
+        document.getElementById("dashboardContainer").style.display = "none";
+      }
+      lucide.createIcons();
+    }
+
+    // Login do Admin
+    async function login() {
+      const password = document.getElementById("adminPassword").value;
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        
+        if (response.ok) {
+          sessionStorage.setItem("admin_logged", "true");
+          checkAuth();
+        } else {
+          alert("Senha incorreta! (Senha padrão de teste: 1234)");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao conectar com o servidor.");
+      }
+    }
+
+    // Sair do Admin
+    function logout() {
+      sessionStorage.setItem("admin_logged", "false");
+      checkAuth();
+    }
+
+    // Limpar arquivo se colar URL
+    function clearImageFile() {
+      document.getElementById("imageFile").value = "";
+    }
+
+    // Limpar URL se escolher arquivo
+    function clearImageUrl() {
+      document.getElementById("imageUrl").value = "";
+    }
+
+    // Carregar Dados do Dashboard
+    async function loadDashboardData() {
+      await fetchCategories();
+      await fetchProducts();
+    }
+
+    // Buscar Categorias da API
+    async function fetchCategories() {
+      try {
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          categories = await response.json();
+          renderCategoryOptions();
+          renderCategoryManageList();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Renderizar Dropdown de Categorias
+    function renderCategoryOptions() {
+      const select = document.getElementById("category");
+      select.innerHTML = "";
+      
+      // Filtra "Todos" do dropdown
+      categories.filter(c => c !== "Todos").forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    // Renderizar Gerenciamento de Categorias
+    function renderCategoryManageList() {
+      const container = document.getElementById("categoriesContainer");
+      container.innerHTML = "";
+      
+      const list = categories.filter(c => c !== "Todos");
+      if (list.length === 0) {
+        container.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhuma categoria cadastrada.</p>`;
+        return;
+      }
+
+      list.forEach(cat => {
+        const item = document.createElement("div");
+        item.className = "cat-item";
+        item.innerHTML = `
+          <span>${cat}</span>
+          <button class="btn-delete-icon" onclick="deleteCategory('${cat}')" title="Excluir Categoria">
+            <i data-lucide="trash-2" size="16"></i>
+          </button>
+        `;
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    // Adicionar Nova Categoria
+    async function saveCategory() {
+      const nameInput = document.getElementById("newCatName");
+      const name = nameInput.value.trim();
+      
+      if (!name) {
+        alert("Insira um nome válido para a categoria!");
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        
+        if (response.ok) {
+          const res = await response.json();
+          if (res.status === 'success') {
+            nameInput.value = "";
+            await fetchCategories();
+          } else {
+            alert("Essa categoria já existe!");
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Excluir Categoria
+    async function deleteCategory(name) {
+      if (confirm(`Tem certeza que deseja deletar a categoria "${name}"? os produtos vinculados não serão deletados.`)) {
+        try {
+          const response = await fetch(`/api/categories?name=${encodeURIComponent(name)}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            await fetchCategories();
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    // Buscar Produtos
+    async function fetchProducts() {
+      try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
+          products = await response.json();
+          renderProductsTable();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Renderizar Tabela de Produtos
+    function renderProductsTable() {
+      const tbody = document.getElementById("productsTableBody");
+      tbody.innerHTML = "";
+
+      if (products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum achadinho cadastrado ainda.</td></tr>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const tr = document.createElement("tr");
+        const formattedPrice = p.price ? `R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}` : 'Sem preço';
+        
+        tr.innerHTML = `
+          <td>
+            ${p.image ? `<img src="${p.image}" class="prod-thumb" alt="">` : `<i data-lucide="image" size="24" style="color: var(--accent-rose)"></i>`}
+          </td>
+          <td style="font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            ${p.title}
+          </td>
+          <td>${p.category}</td>
+          <td><span class="price-tag">${formattedPrice}</span></td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" ${p.is_featured === 1 ? 'checked' : ''} onchange="toggleFeatured('${p.id}', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </td>
+          <td>
+            <button class="btn-delete-icon" onclick="deleteProduct('${p.id}')" title="Excluir Produto">
+              <i data-lucide="trash-2" size="18"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons();
+    }
+
+    // Salvar Produto (Formulário)
+    async function saveProduct(e) {
+      e.preventDefault();
+      
+      const title = document.getElementById("title").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const category = document.getElementById("category").value;
+      const price = document.getElementById("price").value;
+      const link = document.getElementById("link").value.trim();
+      const imageUrl = document.getElementById("imageUrl").value.trim();
+      const imageFile = document.getElementById("imageFile").files[0];
+      const isFeatured = document.getElementById("isFeatured").checked ? 1 : 0;
+
+      if (!imageFile && !imageUrl) {
+        alert("Por favor, selecione um arquivo de imagem para upload ou insira um link de imagem da internet!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("price", price);
+      formData.append("link", link);
+      formData.append("imageUrl", imageUrl);
+      formData.append("isFeatured", isFeatured);
+      if (imageFile) {
+        formData.append("imageFile", imageFile);
+      }
+
+      try {
+        const response = await fetch('/api/products', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          alert("Achadinho cadastrado com sucesso! 🎉");
+          document.getElementById("productForm").reset();
+          await fetchProducts();
+        } else {
+          alert("Erro ao cadastrar produto. Verifique os campos.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro de conexão ao salvar.");
+      }
+    }
+
+    // Alternar Destaque
+    async function toggleFeatured(id, isChecked) {
+      try {
+        const response = await fetch('/api/products/toggle-featured', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, is_featured: isChecked ? 1 : 0 })
+        });
+        
+        if (response.ok) {
+          // Recarregar dados locais
+          await fetchProducts();
+        } else {
+          alert("Erro ao alterar destaque.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Excluir Produto
+    async function deleteProduct(id) {
+      if (confirm("Tem certeza que deseja excluir permanentemente este achadinho da vitrine?")) {
+        try {
+          const response = await fetch(`/api/products?id=${id}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            await fetchProducts();
+          } else {
+            alert("Erro ao excluir produto.");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    // Inicialização
+    checkAuth();
+  </script>
+</body>
+</html>
